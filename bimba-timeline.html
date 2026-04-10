@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bimba Studio — Master Timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --terracotta: #C1643C;
+    --terracotta-light: #D4845C;
+    --terracotta-dark: #A0502E;
+    --cream: #F7EDD8;
+    --cream-dark: #EFE0C0;
+    --indigo: #2D3A6E;
+    --indigo-light: #3D4F8A;
+    --brown: #7A4F2E;
+    --sage: #8A9A7A;
+    --gold: #C9A84C;
+    --text: #3A2A1A;
+    --text-muted: #8A7060;
+    --white: #FFFDF7;
+    --line: rgba(193,100,60,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--cream);
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C1643C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: 'Jost', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 100px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--indigo);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 20L20 0L40 20L20 40z'/%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 40px; right: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold), var(--terracotta));
+    border-radius: 2px;
+  }
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .brand-tag {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-tag::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  header h1 em {
+    font-style: italic;
+    color: var(--terracotta-light);
+  }
+  .header-meta {
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(247,237,216,0.5);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+  .header-actions {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s ease;
+  }
+  .btn-primary {
+    background: var(--terracotta);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--terracotta-dark); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(247,237,216,0.3);
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--indigo-light);
+    padding: 16px 40px;
+    border-bottom: 1px solid rgba(193,100,60,0.15);
+  }
+  .progress-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); white-space: nowrap; }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta), var(--gold));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+  .progress-pct { font-size: 12px; color: var(--cream); font-weight: 500; min-width: 36px; text-align: right; }
+
+  /* MAIN */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 52px 24px 0;
+  }
+
+  /* MONTH CARD */
+  .month-card {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 0;
+    margin-bottom: 52px;
+    position: relative;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* MONTH SIDEBAR */
+  .month-sidebar {
+    padding-top: 4px;
+    padding-right: 28px;
+    position: relative;
+  }
+  .month-sidebar::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 0;
+    bottom: -52px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--terracotta) 0%, var(--line) 60%, transparent 100%);
+  }
+  .month-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    position: absolute;
+    right: -6px;
+    top: 8px;
+    box-shadow: 0 0 0 3px var(--cream), 0 0 0 5px var(--terracotta);
+    transition: all 0.2s;
+  }
+  .month-card:last-child .month-sidebar::after { display: none; }
+  .month-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--terracotta);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .month-year {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .month-count {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--sage);
+  }
+
+  /* MONTH BODY */
+  .month-body {
+    padding-left: 28px;
+  }
+  .month-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+  .month-deadline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.35);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  /* TASKS */
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--white);
+    border: 1px solid var(--cream-dark);
+    border-left: 3px solid var(--terracotta);
+    border-radius: 4px;
+    transition: all 0.18s ease;
+    group: true;
+  }
+  .task-item:hover { border-color: var(--terracotta-light); box-shadow: 0 2px 12px rgba(193,100,60,0.1); }
+  .task-item.done {
+    opacity: 0.55;
+    border-left-color: var(--sage);
+    background: rgba(138,154,122,0.05);
+  }
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+
+  .task-check {
+    width: 18px; height: 18px;
+    min-width: 18px;
+    border-radius: 3px;
+    border: 2px solid var(--cream-dark);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+  .task-check:hover { border-color: var(--sage); }
+  .task-item.done .task-check {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+  .task-check svg { display: none; }
+  .task-item.done .task-check svg { display: block; }
+
+  .task-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 400;
+    outline: none;
+    background: transparent;
+    border: none;
+    cursor: text;
+    font-family: 'Jost', sans-serif;
+    resize: none;
+    min-height: 21px;
+  }
+  .task-text:focus { color: var(--indigo); }
+
+  .task-hard-deadline {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    font-weight: 600;
+    background: rgba(193,100,60,0.08);
+    padding: 2px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .task-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    align-self: center;
+  }
+  .task-item:hover .task-actions { opacity: 1; }
+  .task-btn {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .task-btn:hover { background: var(--cream-dark); color: var(--terracotta); }
+  .task-btn.del:hover { color: #C44; background: rgba(200,68,68,0.08); }
+
+  /* ADD TASK */
+  .add-task-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .add-task-input {
+    flex: 1;
+    padding: 9px 12px;
+    background: transparent;
+    border: 1px dashed rgba(193,100,60,0.35);
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: all 0.15s;
+  }
+  .add-task-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+  .add-task-input:focus { border-color: var(--terracotta); background: var(--white); }
+  .add-task-btn {
+    padding: 9px 16px;
+    background: var(--terracotta);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .add-task-btn:hover { background: var(--terracotta-dark); }
+
+  /* MONTH CONTROLS */
+  .month-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .delete-month-btn {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .month-body:hover .delete-month-btn { opacity: 1; }
+  .delete-month-btn:hover { color: #C44; }
+
+  /* ADD MONTH MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(30,20,10,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 36px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.25);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--indigo);
+    margin-bottom: 6px;
+  }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--cream-dark);
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--cream);
+    outline: none;
+    transition: border 0.15s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--terracotta); background: var(--white); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--indigo);
+    color: var(--cream);
+    padding: 11px 22px;
+    border-radius: 4px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 200;
+    pointer-events: none;
+    border-left: 3px solid var(--terracotta);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* DEADLINE SUMMARY TABLE */
+  .summary-section {
+    margin: 0 auto 60px;
+    max-width: 860px;
+    padding: 0 24px;
+  }
+  .summary-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .summary-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--indigo);
+  }
+  .summary-line { flex: 1; height: 1px; background: var(--line); }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--cream-dark);
+  }
+  .summary-table th {
+    background: var(--indigo);
+    color: var(--cream);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 500;
+  }
+  .summary-table td {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--cream-dark);
+    color: var(--text);
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: rgba(247,237,216,0.5); }
+  .hard-badge {
+    display: inline-block;
+    background: rgba(193,100,60,0.1);
+    color: var(--terracotta);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+  .month-badge {
+    display: inline-block;
+    background: rgba(45,58,110,0.08);
+    color: var(--indigo);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 2px;
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    max-width: 860px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-divider h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--indigo);
+    white-space: nowrap;
+  }
+  .section-divider .line { flex: 1; height: 1px; background: var(--line); }
+
+  @media (max-width: 600px) {
+    header { padding: 32px 20px 28px; }
+    main { padding: 36px 16px 0; }
+    .month-card { grid-template-columns: 90px 1fr; }
+    .month-name { font-size: 20px; }
+    .summary-section { padding: 0 16px; }
+    .section-divider { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="brand-tag">Bimba Studio</div>
+    <h1>Master <em>Timeline</em></h1>
+    <div class="header-meta">April 2026 — October 2026 &nbsp;·&nbsp; 7 months &nbsp;·&nbsp; <span id="total-task-count">—</span> tasks</div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openAddMonth()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add Month
+      </button>
+      <button class="btn btn-outline" onclick="resetAll()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 1 1 6 2M6 2L8.5 4.5M6 2L3.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Reset All
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+  <div class="progress-inner">
+    <span class="progress-label">Progress</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <span class="progress-pct" id="progress-pct">0%</span>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<main id="timeline-container"></main>
+
+<!-- SUMMARY TABLE -->
+<div class="section-divider">
+  <h2>Deadline Summary</h2>
+  <div class="line"></div>
+</div>
+<div class="summary-section">
+  <table class="summary-table" id="summary-table">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Month</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody id="summary-tbody"></tbody>
+  </table>
+</div>
+
+<!-- ADD MONTH MODAL -->
+<div class="modal-overlay" id="month-modal">
+  <div class="modal">
+    <h2>Add a New Month</h2>
+    <p>This will appear in chronological order on your timeline.</p>
+    <div class="form-group">
+      <label>Month Name</label>
+      <input type="text" id="new-month-name" placeholder="e.g. November" />
+    </div>
+    <div class="form-group">
+      <label>Year</label>
+      <input type="text" id="new-month-year" placeholder="2026" value="2026" />
+    </div>
+    <div class="form-group">
+      <label>Subtitle (optional)</label>
+      <input type="text" id="new-month-subtitle" placeholder="e.g. Scaling up for festive season" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" style="color:var(--text-muted);border-color:var(--cream-dark)" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddMonth()">Add Month</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DEFAULT DATA ────────────────────────────────────────────────────────────
+const DEFAULT_DATA = [
+  {
+    id: 'm1',
+    name: 'April',
+    year: '2026',
+    subtitle: 'Sprint to close out all foundational work',
+    hardDeadline: 'Apr 30',
+    tasks: [
+      { id: 't1', text: 'GEO — Complete and publish strategy; Google Business Profile live', done: false, hard: true },
+      { id: 't2', text: 'Batch 2 Designing — Finalize all designs; sampling brief ready', done: false, hard: true },
+      { id: 't3', text: 'Trademark Registration — Application filed', done: false, hard: true },
+      { id: 't4', text: 'GST Registration — Completed', done: false, hard: true },
+      { id: 't5', text: 'Buy Fabrics (Batch 2) — Procure 4 fabrics + accessories for sampling', done: false, hard: false },
+      { id: 't6', text: 'Popup Stalls — Dates, venues, and logistics confirmed', done: false, hard: true },
+      { id: 't7', text: 'Buy Earrings & Accessories for Popup — All display and product accessories procured', done: false, hard: true },
+    ]
+  },
+  {
+    id: 'm2',
+    name: 'May',
+    year: '2026',
+    subtitle: 'Sampling & early brand moves',
+    hardDeadline: null,
+    tasks: [
+      { id: 't8', text: 'Batch 2 Sampling — Samples ordered and in progress with production partner', done: false, hard: false },
+      { id: 't9', text: 'Google Ads — Review campaign data; tune targeting, creatives, and budgets', done: false, hard: false },
+      { id: 't10', text: 'Influencer Outreach — Identify and begin reaching out to first wave', done: false, hard: false },
+    ]
+  },
+  {
+    id: 'm3',
+    name: 'June',
+    year: '2026',
+    subtitle: 'Production + Content push',
+    hardDeadline: null,
+    tasks: [
+      { id: 't11', text: 'Batch 2 Production — Sampling approved; production run initiated', done: false, hard: false },
+      { id: 't12', text: 'Textile Episodes — Begin publishing "The Craft Files" Reels series (weekly)', done: false, hard: false },
+      { id: 't13', text: 'Jaipur Series — Publish sourcing trip Reels; behind-the-scenes content live', done: false, hard: false },
+      { id: 't14', text: 'Influencer Outreach — Collab confirmations and brief delivery', done: false, hard: false },
+    ]
+  },
+  {
+    id: 'm4',
+    name: 'July',
+    year: '2026',
+    subtitle: 'Popup preparation',
+    hardDeadline: null,
+    tasks: [
+      { id: 't15', text: 'Popup Stalls — Confirm stall dates, venues, and logistics', done: false, hard: false },
+      { id: 't16', text: 'Textile Episodes — Continue weekly publishing cadence', done: false, hard: false },
+    ]
+  },
+  {
+    id: 'm5',
+    name: 'August',
+    year: '2026',
+    subtitle: 'Banana Fiber — Milestone 1',
+    hardDeadline: 'Aug 15',
+    tasks: [
+      { id: 't17', text: 'Banana Fabric — Raw fabric procured ✦ Hard deadline: Aug 15', done: false, hard: true },
+      { id: 't18', text: 'Supplier confirmed (BanFab / Taruwar or equivalent); fabric shipped and received', done: false, hard: false },
+      { id: 't19', text: 'Dye compatibility testing with Bagru/Dabu systems initiated', done: false, hard: false },
+    ]
+  },
+  {
+    id: 'm6',
+    name: 'September',
+    year: '2026',
+    subtitle: 'Banana Fiber — Milestone 2',
+    hardDeadline: 'Sept 30',
+    tasks: [
+      { id: 't20', text: 'Banana Fabric — First samples ready ✦ Hard deadline: Sept 30', done: false, hard: true },
+      { id: 't21', text: 'Sampling done with production partner using banana/cotton blend', done: false, hard: false },
+      { id: 't22', text: 'Fit, drape, and wash tests completed; feedback documented', done: false, hard: false },
+    ]
+  },
+  {
+    id: 'm7',
+    name: 'October',
+    year: '2026',
+    subtitle: 'Banana Fiber — Milestone 3',
+    hardDeadline: 'Oct 31',
+    tasks: [
+      { id: 't23', text: 'Banana Fabric — Production ready ✦ Hard deadline: Oct 31', done: false, hard: true },
+      { id: 't24', text: 'Final fabric spec locked; production brief signed off', done: false, hard: false },
+      { id: 't25', text: 'First production run of wellness kurti line initiated', done: false, hard: false },
+    ]
+  }
+];
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function loadData() {
+  try {
+    const raw = localStorage.getItem('bimba_timeline_v2');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+function saveData(data) {
+  try { localStorage.setItem('bimba_timeline_v2', JSON.stringify(data)); } catch(e) {}
+}
+
+let timelineData = loadData();
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('timeline-container');
+  container.innerHTML = '';
+
+  timelineData.forEach((month, mi) => {
+    const doneTasks = month.tasks.filter(t => t.done).length;
+    const totalTasks = month.tasks.length;
+
+    const card = document.createElement('div');
+    card.className = 'month-card';
+    card.style.animationDelay = (mi * 0.06) + 's';
+    card.innerHTML = `
+      <div class="month-sidebar">
+        <div class="month-dot"></div>
+        <div class="month-name">${month.name}</div>
+        <div class="month-year">${month.year}</div>
+        <div class="month-count">${doneTasks}/${totalTasks} done</div>
+      </div>
+      <div class="month-body">
+        <div class="month-controls">
+          ${month.subtitle ? `<div class="month-subtitle">${escHtml(month.subtitle)}</div>` : '<div></div>'}
+          <button class="delete-month-btn" onclick="deleteMonth('${month.id}')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Remove month
+          </button>
+        </div>
+        ${month.hardDeadline ? `<div class="month-deadline-badge">⚡ Hard deadline: ${month.hardDeadline}</div>` : ''}
+        <div class="task-list" id="tasks-${month.id}">
+          ${month.tasks.map(t => renderTask(t, month.id)).join('')}
+        </div>
+        <div class="add-task-row">
+          <input class="add-task-input" id="add-input-${month.id}" placeholder="Add a task…" onkeydown="handleAddKey(event, '${month.id}')"/>
+          <button class="add-task-btn" onclick="addTask('${month.id}')">Add</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  updateProgress();
+  updateSummary();
+  updateTaskCount();
+}
+
+function renderTask(task, monthId) {
+  return `
+    <div class="task-item${task.done ? ' done' : ''}" id="task-${task.id}">
+      <div class="task-check" onclick="toggleTask('${monthId}','${task.id}')">
+        <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="task-text" contenteditable="true" onblur="saveTaskText('${monthId}','${task.id}',this)">${escHtml(task.text)}</div>
+      ${task.hard ? `<span class="task-hard-deadline">Hard</span>` : ''}
+      <div class="task-actions">
+        <button class="task-btn del" onclick="deleteTask('${monthId}','${task.id}')" title="Delete">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── TASK ACTIONS ─────────────────────────────────────────────────────────────
+function toggleTask(monthId, taskId) {
+  const month = timelineData.find(m => m.id === monthId);
+  const task = month.tasks.find(t => t.id === taskId);
+  task.done = !task.done;
+  saveData(timelineData);
+  render();
+  showToast(task.done ? '✓ Task marked complete' : 'Task reopened');
+}
+
+function saveTaskText(monthId, taskId, el) {
+  const month = timelineData.find(m => m.id === monthId);
+  const task = month.tasks.find(t => t.id === taskId);
+  const newText = el.innerText.trim();
+  if (newText) { task.text = newText; saveData(timelineData); }
+  else { el.innerText = task.text; }
+}
+
+function deleteTask(monthId, taskId) {
+  const month = timelineData.find(m => m.id === monthId);
+  month.tasks = month.tasks.filter(t => t.id !== taskId);
+  saveData(timelineData);
+  render();
+  showToast('Task removed');
+}
+
+function addTask(monthId) {
+  const input = document.getElementById('add-input-' + monthId);
+  const text = input.value.trim();
+  if (!text) return;
+  const month = timelineData.find(m => m.id === monthId);
+  month.tasks.push({ id: 't' + Date.now(), text, done: false, hard: false });
+  saveData(timelineData);
+  render();
+  // re-focus input after render
+  const newInput = document.getElementById('add-input-' + monthId);
+  if (newInput) newInput.focus();
+  showToast('Task added');
+}
+
+function handleAddKey(e, monthId) {
+  if (e.key === 'Enter') { e.preventDefault(); addTask(monthId); }
+}
+
+// ─── MONTH ACTIONS ────────────────────────────────────────────────────────────
+function deleteMonth(monthId) {
+  if (!confirm('Remove this entire month and all its tasks?')) return;
+  timelineData = timelineData.filter(m => m.id !== monthId);
+  saveData(timelineData);
+  render();
+  showToast('Month removed');
+}
+
+function openAddMonth() { document.getElementById('month-modal').classList.add('open'); document.getElementById('new-month-name').focus(); }
+function closeModal() { document.getElementById('month-modal').classList.remove('open'); }
+
+function confirmAddMonth() {
+  const name = document.getElementById('new-month-name').value.trim();
+  const year = document.getElementById('new-month-year').value.trim() || '2026';
+  const subtitle = document.getElementById('new-month-subtitle').value.trim();
+  if (!name) { document.getElementById('new-month-name').focus(); return; }
+  timelineData.push({ id: 'm' + Date.now(), name, year, subtitle, hardDeadline: null, tasks: [] });
+  saveData(timelineData);
+  closeModal();
+  document.getElementById('new-month-name').value = '';
+  document.getElementById('new-month-subtitle').value = '';
+  render();
+  showToast('Month added — ' + name + ' ' + year);
+}
+
+// Close modal on overlay click
+document.getElementById('month-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAll() {
+  if (!confirm('Reset to original timeline? All changes will be lost.')) return;
+  timelineData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  saveData(timelineData);
+  render();
+  showToast('Timeline reset to original');
+}
+
+// ─── PROGRESS ─────────────────────────────────────────────────────────────────
+function updateProgress() {
+  let done = 0, total = 0;
+  timelineData.forEach(m => { done += m.tasks.filter(t => t.done).length; total += m.tasks.length; });
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function updateTaskCount() {
+  let total = 0;
+  timelineData.forEach(m => total += m.tasks.length);
+  document.getElementById('total-task-count').textContent = total;
+}
+
+// ─── SUMMARY TABLE ────────────────────────────────────────────────────────────
+function updateSummary() {
+  const tbody = document.getElementById('summary-tbody');
+  const rows = [];
+  timelineData.forEach(m => {
+    m.tasks.forEach(t => {
+      if (t.hard || m.hardDeadline) {
+        rows.push({ task: t.text, month: m.name + ' ' + m.year, hard: t.hard || !!m.hardDeadline, done: t.done });
+      }
+    });
+  });
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted);font-style:italic;text-align:center">No hard deadlines set</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(r => `
+    <tr style="${r.done ? 'opacity:0.5;text-decoration:line-through' : ''}">
+      <td>${escHtml(r.task)}</td>
+      <td><span class="month-badge">${r.month}</span></td>
+      <td>${r.hard ? '<span class="hard-badge">Hard</span>' : ''}</td>
+    </tr>`).join('');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
